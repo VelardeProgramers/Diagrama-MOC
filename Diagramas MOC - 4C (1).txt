@@ -1,0 +1,134 @@
+workspace "Sistema MOC" "Simulador de futuras PC" {
+
+    !impliedRelationships "false" 
+    !identifiers "hierarchical" 
+
+    model {
+        USUARIO = person "Usuario" "Un usario del App Web, con cuenta personal"              "Usuario" 
+        PROVEEDOR = person "Proveedor" "Un usuario del App Web, con cuenta personal"         "Proveedor" 
+        ADMIN = person "Administrador" "Encargado de la verificación optima del sistema"     "Administrador" 
+        
+        MOC = softwareSystem "MOC" "Aplicación web que facilita a los usuarios la simulación de la creación de su futuro ordenador"   "MOC" {
+            BD = container "DataBase" "Permite alojar y almacenar información de los usuarios y del sistema" "Microsoft Azure IASS"   "BD" 
+            ServidorApps = container "Content Updater" "Actualiza repositorios de GitHub, información publicitaria y envio de resultados."{
+                actualizador = component "Lista de actualizaciones de contenido"
+                GH = component "GitHub Component" "Crear un repositorio en la nube"        "Componente" 
+                FC = component "Facebook component" "Medio para información publicitaria"     "Componente"        
+                CE = component "Correo Electrónico Component" "Se obtiene el envio de resultados en PDF o imagen"    "Componente" 
+                CET = component "GitHub Conector" "Desplegar el código a la nube para próximamente recuparar o mejorar" "Componente"
+                CBD = component "Conector Base de Datos" "Conector BD"      "Componente" 
+            
+                
+            }
+            WebAPP = container "Web/Mobile Application" "Permite que el usuario simule el ensamblado de un ordenador y además guardar sus configuraciones, lo comparta, etc.""HTML5, CSS3 y Javascript" "Web/Movile"
+            API = container "API Aplication" "Proceso de información de documentos mediante XML/Https API " "Node JS v.18.12.0 y Angular 12"
+        }       
+        GITHUB = softwareSystem "GitHub"
+        FACEBOOK = softwareSystem "Facebook"
+        CORREO = softwareSystem "Correo electrónico" 
+        
+        ADMIN -> MOC "Regularización de publicaciones, foros y publicidad de productos" "Web" 
+        USUARIO -> MOC "Interacción del armado de una pc, compartir y descargar sus creaciones, evaluar el app" "WEB" 
+        PROVEEDOR -> MOC "Convenios de uso de los productos de hardware y descripción de ellos" "Web"
+        
+        PROVEEDOR -> MOC.WebAPP "Medida de seguridad HTTPs" 
+        USUARIO -> MOC.WebAPP "Medida de seguridad HTTPs"
+        ADMIN -> MOC.WebAPP "Medida de seguridad HTTPs"
+        
+        MOC -> GITHUB "Obtiene información referente a repositorios de codigo publicos como"
+        MOC -> FACEBOOK "Obtiene informacion publicitaria para la actualizacion de componentes" 
+        MOC -> CORREO "Obtiene el envio de resultados en PDF y verificación de cuentas de usuarios" 
+        
+        MOC.ServidorApps -> MOC.BD "Lee y escribe la data a" "Microsoft Azure, port 1433"  
+        MOC.ServidorApps -> CORREO "Obtiene el envio de resultados en PDF y verificación de cuentas de usuarios"
+        MOC.ServidorApps -> FACEBOOK "Obtiene informacion publicitaria para la actualizacion de componentes" 
+        
+        MOC.ServidorApps -> GITHUB "Obtiene información referente a repositorios de codigo publicos como"
+        MOC.WebAPP -> MOC.API "Lee desde" "XML,Https"
+        MOC.API -> MOC.BD "Lee y escribe hacia"
+        
+        MOC.ServidorApps.actualizador -> MOC.ServidorApps.GH "Usa"
+        MOC.ServidorApps.actualizador -> MOC.ServidorApps.FC "Usa"
+        MOC.ServidorApps.actualizador -> MOC.ServidorApps.CE "Usa"
+        MOC.ServidorApps.actualizador -> MOC.ServidorApps.CET "Usa"
+        MOC.ServidorApps.actualizador -> MOC.ServidorApps.CBD "Usa"
+    
+         
+    }
+
+    views {
+        systemContext MOC "Contexto" "Diagrama de contexto" {
+            include USUARIO 
+            include PROVEEDOR 
+            include ADMIN 
+            include MOC 
+            include GITHUB
+            include FACEBOOK
+            include CORREO 
+        }
+
+        container MOC "Contenedores" "Vista de contenedores MOC" {
+            include USUARIO 
+            include MOC.BD
+            include MOC.ServidorApps 
+            include PROVEEDOR 
+            include MOC.WebAPP 
+            include MOC.API
+            include ADMIN 
+            include GITHUB
+            include FACEBOOK 
+            include CORREO 
+        }
+
+        component MOC.BD "Componente" {
+            include MOC.ServidorApps.actualizador
+            include USUARIO 
+            include PROVEEDOR 
+            include MOC.WebAPP 
+            include ADMIN 
+            include MOC.ServidorApps.GH 
+            include MOC.ServidorApps.FC 
+            include MOC.ServidorApps.CE 
+            include MOC.ServidorApps.CET 
+            include MOC.ServidorApps.CBD 
+            include GITHUB
+            include FACEBOOK
+            include CORREO 
+        }
+
+         styles {
+            element "Usuario" {
+                shape "Person" 
+                background "#D5FFB9" 
+                color "#1D1D1B" 
+            }
+            element "Proveedor" {
+                shape "Person" 
+                background "#D5FFB9" 
+                color "#1D1D1B" 
+            }
+            element "Administrador" {
+                shape "Person" 
+                background "#D5FFB9" 
+                color "#1D1D1B" 
+            }
+            element "BD" {
+                shape "Cylinder" 
+                background "#C62E22 " 
+                color "#ffffff" 
+            }
+            element "MOC" {
+                shape "RoundedBox" 
+                background "#46DC1D" 
+            }
+            element "Web/Movile" {
+                shape "RoundedBox" 
+                background "#8488E0 " 
+                color "#ffffff" 
+            }
+
+        }
+
+    }
+
+}
